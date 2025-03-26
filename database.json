@@ -1,0 +1,10 @@
+{
+    "dev": {
+      "driver": "pg",
+      "user": "postgres",
+      "password": "parth2005$",
+      "host": "localhost",
+      "database": "backend",
+      "migrations-dir": "src/database/migrations"
+    }
+  }
