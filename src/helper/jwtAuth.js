@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
 
+
 export const jwtTokenGenerate = async (id) => {
 
     return jwt.sign(

@@ -1,34 +1,44 @@
-import { ApiError } from "../helper/Error.js"
-import { ApiResponse } from "../helper/response.js";
 import { getUserIdModel, matchUserModel } from "../database/dbServices.js";
 import { jwtTokenGenerate } from "../helper/jwtAuth.js";
+import bcrypt from "bcryptjs";
 
 
-export const loginModule = async ({ entereduser, password } ) => {
+export const loginModule = async ({ entereduser, password }) => {
+    console.log(entereduser, password)
     if (!entereduser || entereduser === "") {
-        throw new ApiError(400, "username or email is not entered")
+        return { statusCode: 400, message: "username or email is not entered" }
     }
 
-    if (!password  || password === "") {
-        throw new ApiError(400, "password is not entered")
+    if (!password || password === "") {
+        return { statusCode: 400, message: "password is not entered" }
     }
 
     const isUserFound = await matchUserModel(entereduser)
 
-    if (!isUserFound){
-        throw new ApiError(404, "User not found")
-    }else{
-        if (isUserFound === password) {
-            new ApiResponse(200, "you are successfully logged in")
+    console.log(isUserFound, "data shu chhe beta")
+    console.log(isUserFound.password, "data shu chhe beta")
+    if (!isUserFound) {
+        return { statusCode: 404, message: "token expired" }
+    } else {
+        const compare = await bcrypt.compare(password, isUserFound.password);
+        if (compare) {
+            try {
+                const userId = await getUserIdModel(entereduser).catch(console.error);
+                if (!userId) {
+                    return { statusCode: 404, message: "User Id not found" }
+                }
+                const generatedJwt = await jwtTokenGenerate(userId);
+                console.log(generatedJwt)
+    
+                return {statusCode:200, message:"you are successfully logged in", data: {generatedJwt, isUserFound}}
+            } catch (error) {
+                console.log(error)
+                return { statusCode: 501, message: "something error while finding id" }
+            }
         } else {
-            throw new ApiError(401, "wrong password")
+            return { statusCode: 402, message: "Invalid Credentails" }
         }
     }
 
-    const userId = await getUserIdModel(entereduser).catch(console.error);
-    console.log(userId);
 
-    const generatedJwt = await jwtTokenGenerate(userId);
-
-    return generatedJwt;
 }

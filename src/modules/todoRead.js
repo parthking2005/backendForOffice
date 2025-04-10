@@ -2,12 +2,15 @@ import { getUserTodosModel } from "../database/dbServices.js";
 import { ApiError } from "../helper/Error.js";
 
 export const todoRead = async (data) => {
-    console.log(data);
     if (!data) {
-        throw new ApiError(404, "user not found");
+        return {statusCode:401, message:"token expired", data: []};
     }
 
-    const todos = await getUserTodosModel(data);
-
-    return todos;
+    try {
+        const todos = await getUserTodosModel(data);
+        return {statusCode:200, message:"todos found", data:todos}
+    } catch (error) {
+        console.log(error)
+        return {statusCode:501, message:"error in finding todos", data: []};
+    } 
 }

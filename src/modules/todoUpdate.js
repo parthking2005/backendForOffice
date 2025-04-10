@@ -3,13 +3,13 @@ import { ApiError } from "../helper/Error.js";
 
 export const todoUpdate = async (user_id, todo_id, title, content) => {
     if (!user_id) {
-        throw new ApiError(404, "user not found");
+        return {statusCode:401, message:"token expired"}
     }
     if (!todo_id) {
-        throw new ApiError(400, "todo not found")
+        return {statusCode:400, message:"todo not found"}
     }
     if ((!title  || title === "") && (!content || content === "")) {
-        throw new ApiError(407, "enter title or content");
+        return {statusCode:407, message:"enter title or content"};
     }
     if (title === "") {
         title = null;
@@ -18,13 +18,17 @@ export const todoUpdate = async (user_id, todo_id, title, content) => {
         content = null;
     }
 
-    const todoTitleAlreadyExist = await getTodoTitleModel(title, user_id);
+    const todoTitleAlreadyExist = await getTodoTitleModel(title, user_id, todo_id);
 
     if (todoTitleAlreadyExist) {
-        throw new ApiError(420, "title already exist");
+        return {statusCode:420, message:"title already exist"}
     }
 
-    await updateTodoModel(user_id, todo_id, title, content)
-
-    console.log("the row is updated");
+    try {
+        await updateTodoModel(user_id, todo_id, title, content)
+        return {statusCode:200, message:"todo updated successfully!"}
+    } catch (error) {
+        console.log(error)
+        return {statusCode:501, message:"something error in updating todo"}
+    }
 }

@@ -9,14 +9,14 @@ const TodoModel = {
       return rows[0];
     },
     async getUserTodos(user_id) {
-      const query = 'SELECT * FROM todos WHERE user_id = $1';
+      const query = 'SELECT * FROM todos WHERE user_id = $1 order by created_at';
       const values = [user_id];
       const { rows } = await con.query(query, values);
       return rows;
     },
-    async getTodoTitle(title, user_id) {
-      const query = 'SELECT title FROM todos WHERE title = $1 AND user_id = $2';
-      const values = [title, user_id];
+    async getTodoTitle(title, user_id, todo_id=0) {
+      const query = 'SELECT title FROM todos WHERE title = $1 AND user_id = $2 AND todo_id != $3';
+      const values = [title, user_id, todo_id];
       const { rows } = await con.query(query, values);
       return rows[0];
     },

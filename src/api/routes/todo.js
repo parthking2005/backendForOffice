@@ -4,22 +4,22 @@ import { todocreate, tododelete, todoread, todoupdate } from "../controllers/tod
 
 const todoRouter = Router()
 
-todoRouter.route("/todo").get(
+todoRouter.route("/").get(
     getUserId,
     todoread
 )
 
-todoRouter.route("/todo/add").post(
+todoRouter.route("/add").post(
     getUserId,
     todocreate
 )
 
-todoRouter.route("/todo/update/:todo_id").put(
+todoRouter.route("/update/:todo_id").put(
     getUserId,
     todoupdate
 )
 
-todoRouter.route("/todo/delete/:todo_id").delete(
+todoRouter.route("/delete/:todo_id").delete(
     getUserId,
     tododelete
 )

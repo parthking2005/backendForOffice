@@ -5,6 +5,7 @@ import express from "express";
 const authRoute = express.Router()
 
 
-authRoute.use("/user", router, todoRouter);
+authRoute.use("/user", router);
+authRoute.use("/todo", todoRouter);
 
 export {authRoute};
